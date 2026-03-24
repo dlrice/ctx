@@ -1,0 +1,123 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ctx-tool"
+version = "0.1.0"
+description = "Assemble context from diverse sources into a single LLM-ready string"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "Daniel Rice", email = "daniel.l.rice@gmail.com" }]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Text Processing",
+    "Typing :: Typed",
+]
+dependencies = [
+    "typer>=0.9",
+    "rich>=13.0",
+    "litellm>=1.0",
+    "pydantic>=2.0",
+    "tiktoken>=0.5",
+]
+
+[project.optional-dependencies]
+repo = ["gitingest>=0.1"]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.4",
+    "mypy>=1.10",
+]
+all = ["ctx-tool[repo]"]
+
+[project.scripts]
+ctx = "ctx.cli:run"
+
+[project.urls]
+Homepage = "https://github.com/dlrice/ctx"
+Repository = "https://github.com/dlrice/ctx"
+Issues = "https://github.com/dlrice/ctx/issues"
+
+# ── Build ────────────────────────────────────────────────────────────────────
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ctx"]
+
+# ── Ruff ─────────────────────────────────────────────────────────────────────
+
+[tool.ruff]
+target-version = "py310"
+line-length = 99
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "N",     # pep8-naming
+    "UP",    # pyupgrade
+    "B",     # flake8-bugbear
+    "SIM",   # flake8-simplify
+    "TCH",   # flake8-type-checking
+    "RUF",   # ruff-specific rules
+]
+ignore = [
+    "UP007",  # Use X | Y for union types — keep Optional for Typer compat
+]
+
+[tool.ruff.lint.per-file-ignores]
+"src/ctx/cli.py" = ["B008"]  # Typer uses function calls in argument defaults by design
+"tests/*" = ["S101"]          # assert is fine in tests
+
+[tool.ruff.lint.isort]
+known-first-party = ["ctx"]
+
+# ── Mypy ─────────────────────────────────────────────────────────────────────
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["litellm.*", "gitingest.*", "tiktoken.*"]
+ignore_missing_imports = true
+
+# ── Pytest ───────────────────────────────────────────────────────────────────
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "--strict-config"]
+xfail_strict = true
+filterwarnings = ["error"]
+
+# ── Coverage ─────────────────────────────────────────────────────────────────
+
+[tool.coverage.run]
+source = ["ctx"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.",
+]
