@@ -39,6 +39,8 @@ def _source_notes(source) -> str:
         total_files = meta.get("total_files")
         if total_files is not None:
             parts.append(f"{total_files} files")
+        if meta.get("has_diff"):
+            parts.append("+ diff")
 
     return ", ".join(parts)
 

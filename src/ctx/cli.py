@@ -61,6 +61,14 @@ def main(
         False, "--summary", "-s", help="Print source summary table to stderr"
     ),
     output_format: str = typer.Option("text", "--output-format", help="Output format: text|json"),
+    diff_base: str | None = typer.Option(
+        None,
+        "--diff-base",
+        help=(
+            "Git branch to diff against for prioritizing changed files in MAP/FULL output. "
+            "Auto-detects main/master if omitted. Set to 'none' to disable."
+        ),
+    ),
     copy: bool = typer.Option(
         False, "--copy", "-c", help="Copy output to clipboard (in addition to stdout)"
     ),
@@ -107,6 +115,9 @@ def main(
     # Load all sources
     results = []
 
+    # Resolve diff_base: "none" means disable, None means auto-detect
+    resolved_diff_base = None if diff_base == "none" else diff_base
+
     # If --repo is provided, load it first
     if repo:
         console.print(f"[dim]Loading repo: {repo}[/dim]")
@@ -118,6 +129,7 @@ def main(
             repo_strategy=strategy,
             budget_tokens=budget,
             model=model,
+            diff_base=resolved_diff_base,
         )
         results.append(repo_result)
 
@@ -146,6 +158,7 @@ def main(
             repo_strategy=strategy,
             budget_tokens=budget,
             model=model,
+            diff_base=resolved_diff_base,
         )
         results.append(result)
 

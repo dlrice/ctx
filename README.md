@@ -86,6 +86,7 @@ Sources are positional arguments. Each is auto-detected as a file, directory, UR
 | `--separator SEP`                       | Custom separator for `--no-tags` mode                    |
 | `--summary`, `-s`                       | Print source summary table to stderr                     |
 | `--output-format text\|json`            | Output format (default: `text`)                          |
+| `--diff-base BRANCH`                    | Git branch to diff against for prioritizing changes      |
 | `--copy`, `-c`                          | Copy output to clipboard                                 |
 | `--version`, `-V`                       | Print version and exit                                   |
 
@@ -197,6 +198,23 @@ Without a `--budget`:
 | >= 500 files | **map**  |
 
 You can override this with `--repo-strategy full|map|tree`.
+
+### Diff-Prioritized Output
+
+When loading a git repository, ctx automatically detects the default branch (main/master) and prepends a `git diff` section to the output. This gives LLM reviewers immediate visibility into what has changed, so they can prioritize reviewing modified code.
+
+```bash
+# Auto-detect base branch and include diff
+ctx --repo . --budget 80000 > repo-context.txt
+
+# Diff against a specific branch
+ctx --repo . --diff-base develop > repo-context.txt
+
+# Disable diff inclusion
+ctx --repo . --diff-base none > repo-context.txt
+```
+
+The diff output is truncated at 50KB to avoid blowing token budgets on very large changesets. If no changes are detected (e.g., on the default branch itself), the diff section is omitted.
 
 All strategies use [gitingest](https://github.com/cyclotruc/gitingest) under the hood. The `ingest()` call returns a `(summary, tree, content)` tuple that maps cleanly onto the three strategies.
 

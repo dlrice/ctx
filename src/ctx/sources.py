@@ -103,6 +103,7 @@ def load_source(
     repo_strategy: RepoStrategy = RepoStrategy.AUTO,
     budget_tokens: int | None = None,
     model: str | None = None,
+    diff_base: str | None = None,
 ) -> SourceResult:
     """Load content from a single source.
 
@@ -123,6 +124,7 @@ def load_source(
                 include=include,
                 exclude=exclude,
                 model=model,
+                diff_base=diff_base,
             )
         elif source_type == SourceType.URL:
             return _load_url(source, model=model)
@@ -210,6 +212,7 @@ def _load_repo(
     include: set[str] | None,
     exclude: set[str] | None,
     model: str | None,
+    diff_base: str | None = None,
 ) -> SourceResult:
     """Load a directory/repo via repo.py."""
     from ctx.repo import load_repo
@@ -221,6 +224,7 @@ def _load_repo(
         include=include,
         exclude=exclude,
         model=model,
+        diff_base=diff_base,
     )
     # Override source_type to match what was detected
     result.source_type = source_type
