@@ -17,17 +17,35 @@ ctx --repo . spec.md plan.md > full-context.txt
 
 ## Installation
 
-Requires Python 3.10+.
+Requires Python 3.10+. Install once from the repo and the `ctx` command becomes available everywhere on your machine.
 
 ```bash
-# Core (files, stdin, token counting)
-pip install .
+# Clone the repo (one-time)
+git clone https://github.com/dlrice/ctx
+cd ctx
 
-# With repository support (adds gitingest)
-pip install ".[repo]"
+# Install globally with uv (recommended) — includes repo support
+uv pip install -e ".[all]"
 
-# Everything
-pip install ".[all]"
+# Or with pip
+pip install -e ".[all]"
+```
+
+The `-e` flag installs in editable mode — the `ctx` command is immediately available in your PATH, and any changes you pull from the repo take effect without reinstalling.
+
+To confirm it's working from any directory:
+
+```bash
+which ctx        # should print a path
+ctx --version
+```
+
+**Optional extras** if you prefer a lighter install:
+
+```bash
+pip install -e .          # Core only (files, stdin, token counting — no repo support)
+pip install -e ".[repo]"  # Adds gitingest for --repo and --diff-base
+pip install -e ".[all]"   # Everything (recommended)
 ```
 
 ## Two Modes
