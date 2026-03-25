@@ -17,21 +17,23 @@ ctx --repo . spec.md plan.md > full-context.txt
 
 ## Installation
 
-Requires Python 3.10+. Install once from the repo and the `ctx` command becomes available everywhere on your machine.
+Requires Python 3.10+. The `ctx` command will be available everywhere on your machine after installing.
 
 ```bash
-# Clone the repo (one-time)
-git clone https://github.com/dlrice/ctx
-cd ctx
+# Install directly from GitHub (simplest) — includes repo support
+pip install "git+https://github.com/dlrice/ctx.git[all]"
 
-# Install globally with uv (recommended) — includes repo support
-uv pip install -e ".[all]"
-
-# Or with pip
-pip install -e ".[all]"
+# To update later
+pip install --upgrade "git+https://github.com/dlrice/ctx.git[all]"
 ```
 
-The `-e` flag installs in editable mode — the `ctx` command is immediately available in your PATH, and any changes you pull from the repo take effect without reinstalling.
+Or if you want to hack on the code locally, clone and install in editable mode — changes you pull take effect immediately without reinstalling:
+
+```bash
+git clone https://github.com/dlrice/ctx
+cd ctx
+pip install -e ".[all]"
+```
 
 To confirm it's working from any directory:
 
@@ -43,9 +45,9 @@ ctx --version
 **Optional extras** if you prefer a lighter install:
 
 ```bash
-pip install -e .          # Core only (files, stdin, token counting — no repo support)
-pip install -e ".[repo]"  # Adds gitingest for --repo and --diff-base
-pip install -e ".[all]"   # Everything (recommended)
+pip install "git+https://github.com/dlrice/ctx.git"        # Core only (no --repo support)
+pip install "git+https://github.com/dlrice/ctx.git[repo]"  # Adds gitingest for --repo and --diff-base
+pip install "git+https://github.com/dlrice/ctx.git[all]"   # Everything (recommended)
 ```
 
 ## Two Modes
